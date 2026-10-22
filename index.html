@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pedidos Trade MKT</title>
+<meta name="theme-color" content="#041E42">
+<link rel="icon" href="logo-cineplanet.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --azul:#041E42; --celeste:#0072CE; --magenta:#D40076; --verde:#009770;
+    --gris:#F2F4F8; --borde:#D5DAE3; --texto:#1B2433;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:"Nunito Sans",system-ui,sans-serif;background:var(--gris);color:var(--texto)}
+  header{background:linear-gradient(135deg,var(--azul),var(--celeste));padding:24px 16px 56px;text-align:center;color:#fff}
+  header img{width:260px;max-width:70%;height:auto}
+  header h1{margin:14px 0 4px;font-size:1.4rem;font-weight:800}
+  header p{margin:0;opacity:.85;font-size:.95rem}
+  main{max-width:620px;margin:-36px auto 32px;padding:0 16px}
+  .card{background:#fff;border-radius:16px;padding:24px;box-shadow:0 6px 24px rgba(4,30,66,.12)}
+  .tabs{display:flex;gap:8px;margin-bottom:20px}
+  .tab{flex:1;padding:10px;border-radius:999px;text-align:center;font-weight:700;font-size:.9rem;background:var(--gris);color:#6B7587}
+  .tab.activa{background:var(--azul);color:#fff}
+  .paso{display:none}
+  .paso.activa{display:block}
+  label{display:block;font-weight:700;margin:18px 0 6px}
+  label .num{display:inline-block;width:24px;height:24px;line-height:24px;border-radius:50%;background:var(--celeste);color:#fff;text-align:center;font-size:.8rem;margin-right:6px}
+  select,input[type=date],input[type=email],textarea{width:100%;padding:12px;border:1px solid var(--borde);border-radius:10px;font:inherit;background:#fff}
+  select:focus,input:focus,textarea:focus{outline:2px solid var(--celeste);border-color:transparent}
+  select:disabled{background:var(--gris)}
+  textarea{resize:vertical;min-height:90px}
+  .ayuda{font-size:.8rem;color:#6B7587;margin-top:4px}
+  .contador{float:right}
+  .archivo{border:2px dashed var(--borde);border-radius:10px;padding:16px;text-align:center;cursor:pointer}
+  .archivo:hover{border-color:var(--celeste)}
+  .archivo input{display:none}
+  #preview{max-width:100%;max-height:180px;border-radius:8px;margin-top:10px;display:none}
+  .botones{display:flex;gap:10px;margin-top:24px}
+  button{flex:1;padding:14px;border:0;border-radius:999px;font:inherit;font-weight:800;cursor:pointer}
+  .primario{background:var(--magenta);color:#fff}
+  .secundario{background:var(--gris);color:var(--azul)}
+  button:disabled{opacity:.6;cursor:wait}
+  .error{color:#E40646;font-size:.85rem;margin-top:6px;min-height:1em}
+  .ok{text-align:center;padding:20px 0}
+  .ok .check{width:64px;height:64px;border-radius:50%;background:var(--verde);color:#fff;font-size:2rem;line-height:64px;margin:0 auto 12px}
+  footer{text-align:center;font-size:.8rem;color:#6B7587;padding-bottom:24px}
+</style>
+</head>
+<body>
+<header>
+  <img src="logo-cineplanet.png" alt="Cineplanet">
+  <h1>Pedidos a Trade Marketing</h1>
+  <p>Formulario para gerentes de cine</p>
+</header>
+
+<main>
+  <div class="card">
+    <form id="form" novalidate>
+      <div class="tabs" id="tabs">
+        <div class="tab activa">1. Datos del cine</div>
+        <div class="tab">2. Requerimiento</div>
+      </div>
+
+      <!-- PARTE 1 -->
+      <section class="paso activa" id="paso1">
+        <label for="provincia"><span class="num">1</span>¿Lima o Provincias?</label>
+        <select id="provincia" name="provincia" required>
+          <option value="">Selecciona Lima o Provincias</option>
+        </select>
+
+        <label for="complejo"><span class="num">2</span>Complejo</label>
+        <select id="complejo" name="complejo" required disabled>
+          <option value="">Primero elige Lima o Provincias</option>
+        </select>
+
+        <label for="fecha"><span class="num">3</span>Fecha de solicitud</label>
+        <input type="date" id="fecha" name="fecha" required>
+
+        <label for="correo"><span class="num">4</span>Tu correo</label>
+        <input type="email" id="correo" name="correo" required placeholder="nombre@cineplanet.com.pe" autocomplete="email">
+        <div class="ayuda">Aquí te llegará la confirmación del pedido.</div>
+
+        <div class="error" id="error1"></div>
+        <div class="botones">
+          <button type="button" class="primario" id="siguiente">Siguiente →</button>
+        </div>
+      </section>
+
+      <!-- PARTE 2 -->
+      <section class="paso" id="paso2">
+        <label for="categoria"><span class="num">5</span>¿Qué tipo de trabajo requiere?</label>
+        <select id="categoria" name="categoria" required>
+          <option value="">Selecciona la categoría</option>
+        </select>
+        <select id="subtipo" name="subtipo" required disabled style="margin-top:8px">
+          <option value="">Primero elige la categoría</option>
+        </select>
+
+        <label for="comentarios"><span class="num">6</span>Algún comentario adicional</label>
+        <textarea id="comentarios" name="comentarios" maxlength="200" required placeholder="Describe el requerimiento"></textarea>
+        <div class="ayuda">Máximo 200 caracteres <span class="contador" id="contador">0/200</span></div>
+
+        <label><span class="num">7</span>Adjuntar foto</label>
+        <div class="archivo" id="zona">
+          <input type="file" id="foto" accept=".jpg,.jpeg,image/jpeg">
+          <span id="zonaTexto">📷 Toca para adjuntar una foto (JPG, máx. 500 KB)</span>
+          <img id="preview" alt="Vista previa">
+        </div>
+
+        <div class="error" id="error2"></div>
+        <div class="botones">
+          <button type="button" class="secundario" id="anterior">← Anterior</button>
+          <button type="submit" class="primario" id="enviar">Enviar pedido</button>
+        </div>
+      </section>
+
+      <!-- CONFIRMACIÓN -->
+      <section class="paso ok" id="paso3">
+        <div class="check">✓</div>
+        <h2>¡Pedido enviado!</h2>
+        <p id="okTexto">El equipo de Trade Marketing recibió tu solicitud.</p>
+        <div class="botones"><button type="button" class="primario" onclick="location.reload()">Nuevo pedido</button></div>
+      </section>
+    </form>
+  </div>
+</main>
+<footer>Cineplanet · Trade Marketing</footer>
+
+<script>
+// ====== CONFIGURACIÓN: pega aquí la URL de tu Google Apps Script (ver README) ======
+const SCRIPT_URL = "PEGAR_AQUI_URL_DEL_APPS_SCRIPT";
+
+const COMPLEJOS = {
+  "Lima": ["Alcázar","Brasil","Canto Grande","Centro","Comas","Centro Cívico","El Polo","Guardia Civil","La Molina","La Molina Cenco","Lurin","Mall del Sur","Norte","Parque La Molina","Plaza San Miguel","Plaza Santa Catalina","Primavera","Pro","Puruchuco","Risso","Salaverry","San Borja","San Juan de Lurigancho","San Miguel","Santa Clara","Santa Clara Qhatu Plaza","Ventanilla","Villa El Salvador","Villa María del Triunfo"],
+  "Provincias": ["Arequipa Paseo Central","Arequipa Mall Plaza","Arequipa Real Plaza","Cajamarca","Chiclayo Mall","Chiclayo Real Plaza","Cusco","Huancayo Real Plaza","Huánuco Real Plaza","Juliaca","Piura Centro","Piura Real Plaza","Pucallpa","Puno","Tacna","Trujillo Centro"]
+};
+
+const TRABAJOS = {
+  "Material dañado": ["Tótem dañado","Tótem desgastado","Vinil dañado","Vinil desgastado","Vinil manchado","Señalética rota","Señalética desgastada","Señalética sucia / deteriorada"],
+  "Pantalla / Tecnología": ["Plasma apagado","Plasma con error de imagen","Plasma con contenido desactualizado","Plasma dañado físicamente"],
+  "Solicitud de arte": ["Solicitud de arte A4","Solicitud de arte señalética","Solicitud de arte vinil","Solicitud de arte campaña/otros"],
+  "Solicitud de materiales": ["Solicitud de materiales Clásico","Solicitud de materiales Prime","Solicitud de materiales Xtreme","Solicitud de materiales Cumple Planet","Solicitud de materiales campaña especial"],
+  "Retiro de material": ["Retiro de material vencido","Retiro de material dañado","Retiro de material por remodelación","Retiro total de campaña"],
+  "Instalación": ["Instalación de tótem nuevo","Reinstalación / reposición de tótem","Instalación de vinil nuevo","Reposición de vinil","Instalación de señalética nueva"],
+  "Consulta / Coordinación": ["Consulta de disponibilidad de material","Consulta de fecha de envío","Solicitud de cotización de material","Coordinación con proveedor"],
+  "Otros": ["Otros"]
+};
+
+const $ = id => document.getElementById(id);
+const MAX_KB = 500;
+const CORREO_OK = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+let fotoBase64 = "", fotoNombre = "";
+
+function llenar(select, items, placeholder) {
+  select.innerHTML = `<option value="">${placeholder}</option>` +
+    items.map(v => `<option value="${v}">${v}</option>`).join("");
+}
+llenar($("provincia"), Object.keys(COMPLEJOS), "Selecciona Lima o Provincias");
+llenar($("categoria"), Object.keys(TRABAJOS), "Selecciona la categoría");
+$("fecha").valueAsDate = new Date(Date.now() - new Date().getTimezoneOffset() * 60000);
+
+function enlazar(padre, hijo, datos, ph) {
+  padre.addEventListener("change", () => {
+    const items = datos[padre.value] || [];
+    llenar(hijo, items, items.length ? ph : "Primero elige una opción");
+    hijo.disabled = !items.length;
+    if (items.length === 1) hijo.value = items[0];
+  });
+}
+Object.values(COMPLEJOS).forEach(l => l.sort((a, b) => a.localeCompare(b, "es")));
+enlazar($("provincia"), $("complejo"), COMPLEJOS, "Selecciona el complejo");
+enlazar($("categoria"), $("subtipo"), TRABAJOS, "Selecciona el subtipo");
+
+function irA(n) {
+  document.querySelectorAll(".paso").forEach((p, i) => p.classList.toggle("activa", i === n - 1));
+  document.querySelectorAll(".tab").forEach((t, i) => t.classList.toggle("activa", i === n - 1));
+  $("tabs").style.display = n === 3 ? "none" : "flex";
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+$("siguiente").onclick = () => {
+  if (!$("provincia").value || !$("complejo").value || !$("fecha").value || !$("correo").value.trim()) {
+    $("error1").textContent = "Completa todos los campos para continuar.";
+    return;
+  }
+  if (!CORREO_OK.test($("correo").value.trim())) {
+    $("error1").textContent = "Ingresa un correo válido.";
+    return;
+  }
+  $("error1").textContent = "";
+  irA(2);
+};
+$("anterior").onclick = () => irA(1);
+["paso1", "paso2"].forEach((id, i) =>
+  $(id).addEventListener("input", () => $("error" + (i + 1)).textContent = ""));
+
+$("comentarios").oninput = e => $("contador").textContent = `${e.target.value.length}/200`;
+
+$("zona").onclick = e => { if (e.target.id !== "foto") $("foto").click(); };
+$("foto").onchange = () => {
+  const f = $("foto").files[0];
+  $("error2").textContent = "";
+  fotoBase64 = fotoNombre = "";
+  $("preview").style.display = "none";
+  if (!f) return;
+  if (!/\.jpe?g$/i.test(f.name) || f.type !== "image/jpeg") {
+    $("error2").textContent = "La foto debe ser JPG.";
+    $("foto").value = ""; return;
+  }
+  if (f.size > MAX_KB * 1024) {
+    $("error2").textContent = `La foto pesa ${Math.round(f.size / 1024)} KB. El máximo es ${MAX_KB} KB.`;
+    $("foto").value = ""; return;
+  }
+  const r = new FileReader();
+  r.onload = () => {
+    $("preview").src = r.result;
+    $("preview").style.display = "block";
+    fotoBase64 = r.result.split(",")[1];
+    fotoNombre = f.name;
+    $("zonaTexto").textContent = `✅ ${f.name} (${Math.round(f.size / 1024)} KB) — toca para cambiar`;
+  };
+  r.readAsDataURL(f);
+};
+
+$("form").onsubmit = async e => {
+  e.preventDefault();
+  if (!$("categoria").value || !$("subtipo").value) {
+    $("error2").textContent = "Elige el tipo de trabajo y el subtipo.";
+    return;
+  }
+  if (!$("comentarios").value.trim()) {
+    $("error2").textContent = "Escribe un comentario sobre el requerimiento.";
+    return;
+  }
+  if (!fotoBase64) {
+    $("error2").textContent = "Adjunta una foto (JPG, máx. 500 KB).";
+    return;
+  }
+  const datos = {
+    provincia: $("provincia").value,
+    complejo: $("complejo").value,
+    fecha: $("fecha").value,
+    correo: $("correo").value.trim(),
+    categoria: $("categoria").value,
+    subtipo: "Trade - " + $("subtipo").value,
+    comentarios: $("comentarios").value.trim(),
+    fotoNombre, fotoBase64
+  };
+  $("enviar").disabled = true;
+  $("enviar").textContent = "Enviando…";
+  $("error2").textContent = "";
+  try {
+    // text/plain evita el "preflight" CORS que Apps Script no soporta
+    const res = await fetch(SCRIPT_URL, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(datos) });
+    const r = await res.json();
+    if (!r.ok) throw new Error(r.error || "Error");
+    $("okTexto").textContent = `Tu pedido ${r.id} fue registrado. Te enviamos la confirmación a ${datos.correo}.`;
+    irA(3);
+  } catch (err) {
+    $("error2").textContent = "No se pudo enviar. Revisa tu conexión e inténtalo de nuevo.";
+  } finally {
+    $("enviar").disabled = false;
+    $("enviar").textContent = "Enviar pedido";
+  }
+};
+</script>
+</body>
+</html>
